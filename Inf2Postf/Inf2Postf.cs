@@ -11,32 +11,32 @@ namespace Inf2Postf
 
         static decimal Calculator(List<string> list)
         {
-            decimal res = 0, bfr1, bfr2;
-            for(int i = 1; i < list.Count(); i++)
+            decimal res = 0, bfr1, bfr2; //Buffer1 and Buffer2, obviouslt
+            for (int i = 1; i < list.Count(); i++)
             {
-                Predicate<char> pred = Convert.ToChar(list[i+1]);
-                if (Decimal.TryParse(list[i-1], out bfr1) && Decimal.TryParse(list[i], out bfr2) && operators.Contains(Convert.ToChar(list[i+1])))
+                //Takes three consecutive strings. Checks for the format DECIMAL DECIMAL OPERATOR
+                if (Decimal.TryParse(list[i - 1], out bfr1) && Decimal.TryParse(list[i], out bfr2) && operators.Contains(list[i + 1][0]))
                 {
-                    switch(list[i+1])
+                    switch (list[i + 1])
                     {
                         case "+":
                             bfr1 += bfr2;
-                            list[i-1] = bfr1.ToString();
+                            list[i - 1] = bfr1.ToString();
                             list.RemoveRange(i, 2);
                             break;
                         case "-":
                             bfr1 -= bfr2;
-                            list[i-1] = bfr1.ToString();
+                            list[i - 1] = bfr1.ToString();
                             list.RemoveRange(i, 2);
                             break;
                         case "*":
                             bfr1 *= bfr2;
-                            list[i-1] = bfr1.ToString();
+                            list[i - 1] = bfr1.ToString();
                             list.RemoveRange(i, 2);
                             break;
                         case "/":
                             bfr1 /= bfr2;
-                            list[i-1] = bfr1.ToString();
+                            list[i - 1] = bfr1.ToString();
                             list.RemoveRange(i, 2);
                             break;
                         case "^":
@@ -45,11 +45,9 @@ namespace Inf2Postf
                             list.RemoveRange(i, 2);
                             break;
                     }
-                    i = 0;
+                    i = 0; //It's 0 instead of 1 because now the i++ is going to get executed
                 }
             }
-            /*foreach (string s in list)
-                Console.Write(s + "|");*/
             Decimal.TryParse(list[0], out res);
 
             return res;
@@ -58,8 +56,8 @@ namespace Inf2Postf
         static List<string> inf2postf(string infix)
         {
             //Console.WriteLine(infix);
-            Stack<char> stack = new Stack<char>();
-            List<string> postfix = new List<string>();
+            Stack<char> stack = new Stack<char>(); //The stack
+            List<string> postfix = new List<string>(); //The output
             bool added = true;
             double aux = 0, dec = 0;
             for (int i = 0; i < infix.Length; i++) //Iterates thru every character in the string
@@ -69,7 +67,7 @@ namespace Inf2Postf
                     if (dec == 0)
                     {
                         aux *= 10;
-                        aux += Int32.Parse(infix[i].ToString()); 
+                        aux += Int32.Parse(infix[i].ToString());
                     }
                     else
                     {
@@ -138,7 +136,6 @@ namespace Inf2Postf
                 foreach (string s in postfix)
                     Console.Write(s + " ");
                 Console.Write("\n");
-
                 Console.Write("Stack: ");
                 foreach (char c in stack)
                     Console.Write(c + " ");
@@ -164,7 +161,7 @@ namespace Inf2Postf
             while (true)
             {
                 s = Console.ReadLine();
-                Console.WriteLine("\nLa respuesta es "+Calculator(inf2postf(s)));
+                Console.WriteLine("La respuesta es " + Calculator(inf2postf(s)));
                 if (s == "0")
                     break;
             }
