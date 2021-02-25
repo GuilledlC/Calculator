@@ -6,33 +6,78 @@ namespace Inf2Postf
 {
     class Program
     {
-        static char[] operators = new char[] { '+', '-', '*', '/', '^' };
-        static char[] pref = new char[] {'*', '/', '^' };
+        static char[] operators = new char[] { '+', '-', '*', '/', '^', '%' };
+        static char[] pref = new char[] { '*', '/', '^', '%' };
+
+        static decimal Calculator(List<string> list)
+        {
+            decimal res = 0, bfr1, bfr2;
+            for(int i = 1; i < list.Count(); i++)
+            {
+                if(Decimal.TryParse(list[i-1], out bfr1) && Decimal.TryParse(list[i], out bfr2) && operators.Contains(Convert.ToChar(list[i+1])))
+                {
+                    switch(list[i+1])
+                    {
+                        case "+":
+                            bfr1 += bfr2;
+                            list[i-1] = bfr1.ToString();
+                            list.RemoveRange(i, 2);
+                            break;
+                        case "-":
+                            bfr1 -= bfr2;
+                            list[i-1] = bfr1.ToString();
+                            list.RemoveRange(i, 2);
+                            break;
+                        case "*":
+                            bfr1 *= bfr2;
+                            list[i-1] = bfr1.ToString();
+                            list.RemoveRange(i, 2);
+                            break;
+                        case "/":
+                            bfr1 /= bfr2;
+                            list[i-1] = bfr1.ToString();
+                            list.RemoveRange(i, 2);
+                            break;
+                        case "^":
+                            bfr1 = (decimal)Math.Pow(Convert.ToDouble(bfr1), Convert.ToDouble(bfr2));
+                            list[i - 1] = bfr1.ToString();
+                            list.RemoveRange(i, 2);
+                            break;
+                    }
+                    i = 0;
+                }
+            }
+            /*foreach (string s in list)
+                Console.Write(s + "|");*/
+            Decimal.TryParse(list[0], out res);
+
+            return res;
+        }
+
         static List<string> inf2postf(string infix)
         {
-            Console.WriteLine(infix);
+            //Console.WriteLine(infix);
             Stack<char> stack = new Stack<char>();
             List<string> postfix = new List<string>();
             bool added = true;
             double aux = 0, dec = 0;
             for (int i = 0; i < infix.Length; i++) //Iterates thru every character in the string
             {
-                if(Char.IsDigit(infix[i])) //Number (Digit)
+                if (Char.IsDigit(infix[i])) //Number (Digit)
                 {
-                    if(dec == 0)
+                    if (dec == 0)
                     {
                         aux *= 10;
-                        aux += Int32.Parse(infix[i].ToString());
-                        added = false;
+                        aux += Int32.Parse(infix[i].ToString()); 
                     }
                     else
                     {
-                        aux += Int32.Parse(infix[i].ToString())*Math.Pow(10, dec);
+                        aux += Int32.Parse(infix[i].ToString()) * Math.Pow(10, dec);
                         dec -= 1;
-                        added = false;
                     }
+                    added = false;
                 }
-                else if(infix[i] == '.')
+                else if (infix[i] == '.')
                 {
                     dec -= 1;
                 }
@@ -71,10 +116,13 @@ namespace Inf2Postf
                     }
                 }
 
-                if(i == infix.Length-1)  //Last character
+                if (i == infix.Length - 1)  //Last character
                 {
-                    if(!added)
+                    if (!added)
+                    {
                         postfix.Add(aux.ToString());
+                        added = true;
+                    }
                     while (stack.Count > 0)
                     {
                         if (operators.Contains(stack.Peek()))
@@ -85,7 +133,7 @@ namespace Inf2Postf
                             stack.Pop();
                     }
                 }
-                Console.Write("Postfix: ");
+                /*Console.Write("Postfix: ");
                 foreach (string s in postfix)
                     Console.Write(s + " ");
                 Console.Write("\n");
@@ -95,19 +143,31 @@ namespace Inf2Postf
                     Console.Write(c + " ");
                 Console.Write("\n");
                 Console.WriteLine("Aux: " + aux);
+                Console.WriteLine(added);*/
             }
-
             return postfix;
         }
+
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
+            string[] lista = new string[] { "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho" };
             List<string> postfix = new List<string>();
             //postfix = inf2postf("((1-(2+3))*4)^(5+6)");
             //postfix = inf2postf("(1+(2*3");
-            postfix = inf2postf("1.5*2-6*5");
+            /*postfix = inf2postf("1.5*2-6*5");
             foreach (string s in postfix)
-                Console.Write(s+" ");
+                Console.Write(s + " ");*/
+
+            string s;
+            while (true)
+            {
+                s = Console.ReadLine();
+                Console.WriteLine("\nLa respuesta es "+Calculator(inf2postf(s)));
+                if (s == "0")
+                    break;
+            }
+
             Console.ReadLine();
         }
     }
