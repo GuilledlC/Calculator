@@ -14,7 +14,8 @@ namespace Inf2Postf
             decimal res = 0, bfr1, bfr2;
             for(int i = 1; i < list.Count(); i++)
             {
-                if(Decimal.TryParse(list[i-1], out bfr1) && Decimal.TryParse(list[i], out bfr2) && operators.Contains(Convert.ToChar(list[i+1])))
+                Predicate<char> pred = Convert.ToChar(list[i+1]);
+                if (Decimal.TryParse(list[i-1], out bfr1) && Decimal.TryParse(list[i], out bfr2) && operators.Contains(Convert.ToChar(list[i+1])))
                 {
                     switch(list[i+1])
                     {
